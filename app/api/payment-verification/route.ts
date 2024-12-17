@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const { uid, email, name } = await request.json()
 
     // Send email ticket
-    const emailHtml = render(EventTicket({ ticketHolder: name, ticketId: uid }))
+    const emailHtml = await render(EventTicket({ ticketHolder: name, ticketId: uid }))
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    await transporter.sendMail({
+    transporter.sendMail({
       from: '"GEM Fest" <noreply@gemfest.com>',
       to: email,
       subject: 'Your GEM Fest Ticket',
