@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
       // Send email ticket
       const { name, email, uid } = await fetchUserDetails(razorpay_order_id)
-      const emailHtml = render(EventTicket({ name, uid }))
+      const emailHtml = await render(EventTicket({ ticketHolder: name, ticketId: uid }))
 
       const sendEmailCommand = new SendEmailCommand({
         Destination: {
