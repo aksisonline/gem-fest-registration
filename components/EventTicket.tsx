@@ -8,61 +8,41 @@ import {
   Img,
   Row,
   Column,
-} from '@react-email/components';
+} from '@react-email/components'
 
 interface TicketProps {
-  eventName?: string;
-  eventDate?: string;
-  eventTime?: string;
-  venue?: string;
-  ticketHolder?: string;
-  ticketId?: string;
-  qrCodeUrl?: string;
+  name: string
+  uid: string
 }
 
-export default function EventTicket({
-  eventName = 'GEM Fest 2024',
-  eventDate = 'Aug 30 2024',
-  eventTime = '3:30 PM',
-  venue = 'Dental Parking',
-  ticketHolder = 'Guest',
-  ticketId = 'GEM2024-001',
-  qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=GEMFEST2024-${ticketId}`,
-}: TicketProps) {
+export default function EventTicket({ name, uid }: TicketProps) {
+  const eventName = 'GEM Fest 2024'
+  const eventDate = 'Aug 30 2024'
+  const eventTime = '3:30 PM'
+  const venue = 'Dental Parking'
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=GEMFEST2024-${uid}`
+
   return (
     <Html>
       <Head>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
       </Head>
       <Body style={main}>
         <Container style={container}>
-          <Section style={welcomeSection}>
-            <Text style={welcomeText}>
-              Dear {ticketHolder},
-            </Text>
-            <Text style={welcomeMessage}>
-              Thank you for registering for GEM Fest 2024! Here&apos;s your official e-ticket.
-              Please keep this email safe and present it at the entrance.
-            </Text>
-          </Section>
-
           <Section style={ticket}>
-            {/* Header */}
             <Row>
               <Column>
                 <Text style={eventTitle}>{eventName}</Text>
               </Column>
             </Row>
 
-            {/* Ticket ID */}
             <Row style={ticketIdRow}>
               <Column>
                 <Text style={label}>Ticket ID</Text>
-                <Text style={value}>{ticketId}</Text>
+                <Text style={value}>{uid}</Text>
               </Column>
             </Row>
 
-            {/* Event Details */}
             <Section style={detailsSection}>
               <Row style={detailsRow}>
                 <Column style={detailsColumn}>
@@ -85,19 +65,17 @@ export default function EventTicket({
               <Row style={holderRow}>
                 <Column>
                   <Text style={label}>Ticket Holder</Text>
-                  <Text style={value}>{ticketHolder}</Text>
+                  <Text style={value}>{name}</Text>
                 </Column>
               </Row>
             </Section>
 
-            {/* Divider */}
             <Row>
               <Column>
                 <hr style={divider} />
               </Column>
             </Row>
 
-            {/* QR Code Section */}
             <Section style={qrSection}>
               <Text style={qrLabel}>Scan to verify ticket</Text>
               <Img
@@ -109,7 +87,6 @@ export default function EventTicket({
               />
             </Section>
 
-            {/* Footer */}
             <Section style={footer}>
               <Text style={footerText}>
                 Please present this ticket at the entrance. This ticket is unique and valid for one-time use only.
@@ -122,9 +99,10 @@ export default function EventTicket({
         </Container>
       </Body>
     </Html>
-  );
+  )
 }
 
+// Styles from the previous example
 const main = {
   backgroundColor: '#ffffff',
   fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -215,23 +193,6 @@ const footerText = {
   margin: '0',
 };
 
-const welcomeSection = {
-  marginBottom: '24px',
-};
-
-const welcomeText = {
-  fontSize: '18px',
-  color: '#111827',
-  fontWeight: '600',
-  margin: '0 0 12px 0',
-};
-
-const welcomeMessage = {
-  fontSize: '16px',
-  color: '#4b5563',
-  lineHeight: '1.5',
-  margin: '0',
-};
 
 const ticketIdRow = {
   margin: '0 0 24px 0',
