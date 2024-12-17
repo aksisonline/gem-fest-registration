@@ -28,7 +28,7 @@ export default function EventTicket({
   venue = 'Dental Parking',
   ticketHolder = 'Guest',
   ticketId = 'GEM2024-001',
-  qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=GEMFEST2024-${ticketId}`,
+  qrCodeUrl = '',
 }: TicketProps) {
   return (
     <Html>
@@ -97,18 +97,6 @@ export default function EventTicket({
                 <hr style={divider} />
               </Column>
             </Row>
-
-            {/* QR Code Section */}
-            <Section style={qrSection}>
-              <Text style={qrLabel}>Scan to verify ticket</Text>
-              <Img
-                src={qrCodeUrl}
-                width="150"
-                height="150"
-                alt="Ticket QR Code"
-                style={qrCode}
-              />
-            </Section>
 
             {/* Footer */}
             <Section style={footer}>
@@ -195,16 +183,6 @@ const divider = {
   margin: '24px 0',
 };
 
-const qrSection = {
-  textAlign: 'center' as const,
-  margin: '24px 0',
-};
-
-const qrCode = {
-  display: 'inline-block',
-  margin: '0 auto',
-};
-
 const footer = {
   textAlign: 'center' as const,
   margin: '24px 0 0 0',
@@ -238,12 +216,6 @@ const ticketIdRow = {
   margin: '0 0 24px 0',
   borderBottom: '1px solid #e5e7eb',
   paddingBottom: '16px',
-};
-
-const qrLabel = {
-  fontSize: '14px',
-  color: '#6b7280',
-  marginBottom: '12px',
 };
 
 const footerNote = {

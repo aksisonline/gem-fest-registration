@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import Link from 'next/link'
-
 export default function Confirmation() {
   return (
     <div className="container mx-auto px-4 py-8 text-center">

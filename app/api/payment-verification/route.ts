@@ -1,60 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
-import crypto from 'crypto'
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
+import nodemailer from 'nodemailer'
 import { render } from '@react-email/render'
 import EventTicket from '@/emails/EventTicket'
 
-const sesClient = new SESClient({ region: process.env.AWS_REGION })
-
 export async function POST(request: NextRequest) {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = await request.json()
+    const { uid, email, name } = await request.json()
 
-    const body = razorpay_order_id + '|' + razorpay_payment_id
-    const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
-      .update(body.toString())
-      .digest('hex')
+    // Send email ticket
+    const emailHtml = render(EventTicket({ ticketHolder: name, ticketId: uid }))
 
-    if (expectedSignature === razorpay_signature) {
-      // Payment is verified
-      // TODO: Update order status in database
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT!, 10),
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    })
 
-      // Send email ticket
-      const { name, email, uid } = await fetchUserDetails(razorpay_order_id)
-      const emailHtml = await render(EventTicket({ ticketHolder: name, ticketId: uid }))
+    await transporter.sendMail({
+      from: '"GEM Fest" <noreply@gemfest.com>',
+      to: email,
+      subject: 'Your GEM Fest Ticket',
+      html: emailHtml,
+    })
 
-      const sendEmailCommand = new SendEmailCommand({
-        Destination: {
-          ToAddresses: [email],
-        },
-        Message: {
-          Body: {
-            Html: { Data: emailHtml },
-          },
-          Subject: { Data: 'Your GEM Fest Ticket' },
-        },
-        Source: 'noreply@gemfest.com',
-      })
-
-      await sesClient.send(sendEmailCommand)
-
-      return NextResponse.json({ success: true })
-    } else {
-      return NextResponse.json({ success: false, error: 'Invalid signature' }, { status: 400 })
-    }
+    return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Payment verification error:', error)
     return NextResponse.json({ success: false, error: 'Payment verification failed' }, { status: 500 })
-  }
-}
-
-async function fetchUserDetails(orderId: string) {
-  // TODO: Implement fetching user details from database
-  return {
-    name: 'John Doe',
-    email: 'john@example.com',
-    uid: 'GEM2024001',
   }
 }
 
