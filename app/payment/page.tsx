@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function Payment() {
@@ -39,10 +39,12 @@ export default function Payment() {
   }, [orderId, router])
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">Processing Payment</h1>
-      <p>Please wait while we process your registration...</p>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold mb-4">Processing Payment</h1>
+        <p>Please wait while we process your registration...</p>
+      </div>
+    </Suspense>
   )
 }
 
