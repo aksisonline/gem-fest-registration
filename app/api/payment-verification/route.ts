@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     })
 
     transporter.sendMail({
-      from: '"GEM Fest" <noreply@gemfest.com>',
+      from: 'aseelama@gitam.in',
       to: email,
       subject: 'Your GEM Fest Ticket',
       html: emailHtml,

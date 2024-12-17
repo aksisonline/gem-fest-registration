@@ -15,10 +15,27 @@ export default function Payment() {
       return
     }
 
-    // Simulate payment processing
-    setTimeout(() => {
-      router.push('/confirmation')
-    }, 2000)
+    // Handle registration response
+    const checkRegistration = async () => {
+      try {
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          body: new FormData() // Add your form data here
+        })
+        const data = await response.json()
+        
+        if (data.success && data.redirectUrl) {
+          window.location.href = data.redirectUrl
+        } else {
+          router.push('/')
+        }
+      } catch (error) {
+        console.error('Registration error:', error)
+        router.push('/')
+      }
+    }
+
+    checkRegistration()
   }, [orderId, router])
 
   return (
