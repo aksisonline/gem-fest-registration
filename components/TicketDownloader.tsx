@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { render } from '@react-email/render'
 import EventTicket from '@/emails/EventTicket'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
 
 interface TicketDownloaderProps {
   name: string
@@ -40,14 +42,16 @@ export default function TicketDownloader({ name, uid }: TicketDownloaderProps) {
 
   return (
     <div className="mb-8">
-      <div dangerouslySetInnerHTML={{ __html: ticketHtml }} />
-      <button 
-        onClick={downloadPdf} 
-        className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition duration-300"
-        aria-label="Download ticket as PDF"
-      >
-        Download as PDF
-      </button>
+      <Card className="shadow-lg">
+        <CardContent>
+          <div dangerouslySetInnerHTML={{ __html: ticketHtml }} />
+        </CardContent>
+        <CardFooter className="flex justify-end">
+            <Button onClick={downloadPdf} aria-label="Download ticket as PDF" className="mx-auto">
+            Download as PDF
+            </Button>
+        </CardFooter>
+      </Card>
     </div>
   )
 }

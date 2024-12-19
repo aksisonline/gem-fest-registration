@@ -15,12 +15,11 @@ function PaymentComponent() {
       return
     }
 
-    // Handle registration response
-    const checkRegistration = async () => {
+    // Handle payment processing
+    const processPayment = async () => {
       try {
-        const response = await fetch('/api/register', {
+        const response = await fetch(`/api/payment-verification?orderId=${orderId}`, {
           method: 'POST',
-          body: new FormData() // Add your form data here
         })
         const data = await response.json()
         
@@ -30,12 +29,12 @@ function PaymentComponent() {
           router.push('/')
         }
       } catch (error) {
-        console.error('Registration error:', error)
+        console.error('Payment processing error:', error)
         router.push('/')
       }
     }
 
-    checkRegistration()
+    processPayment()
   }, [orderId, router])
 
   return (

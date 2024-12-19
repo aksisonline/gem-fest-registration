@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { toast } from '@/hooks/use-toast'
+import { MultiStepLoader } from '@/components/ui/multi-step-loader'
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -29,6 +30,7 @@ const formSchema = z.object({
 export default function RegistrationForm() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,6 +45,7 @@ export default function RegistrationForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
+    setLoading(true)
     try {
       const formData = new FormData()
       Object.entries(values).forEach(([key, value]) => {
@@ -63,7 +66,7 @@ export default function RegistrationForm() {
       }
 
       const data = await response.json()
-      router.push(`/payment?orderId=${data.orderId}`)
+      router.push(`/confirmation?name=${encodeURIComponent(values.name)}&uid=${encodeURIComponent(data.uid)}`)
     } catch (error) {
       console.error('Registration error:', error)
       toast({
@@ -73,113 +76,125 @@ export default function RegistrationForm() {
       })
     } finally {
       setIsSubmitting(false)
+      setLoading(false)
     }
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="John Doe" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input type="email" placeholder="john@example.com" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phoneNumber"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone Number</FormLabel>
-              <FormControl>
-                <Input placeholder="1234567890" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="isGITAMite"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>
-                  Are you a GITAMite?
-                </FormLabel>
-                <FormDescription>
-                  Check this box if you are a GITAM student or staff member.
-                </FormDescription>
-              </div>
-            </FormItem>
-          )}
-        />
-        {form.watch('isGITAMite') && (
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name="gitamID"
+            name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>GITAM ID</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your GITAM ID" {...field} />
+                  <Input placeholder="John Doe" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-        )}
-        <FormField
-          control={form.control}
-          name="profilePicture"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Profile Picture</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => field.onChange(e.target.files?.[0])}
-                />
-              </FormControl>
-              <FormDescription>
-                Upload a profile picture to be displayed on your ticket.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input type="email" placeholder="john@example.com" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone Number</FormLabel>
+                <FormControl>
+                  <Input placeholder="1234567890" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="isGITAMite"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>
+                    Are you a GITAMite?
+                  </FormLabel>
+                  <FormDescription>
+                    Check this box if you are a GITAM student or staff member.
+                  </FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+          {form.watch('isGITAMite') && (
+            <FormField
+              control={form.control}
+              name="gitamID"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>GITAM ID</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your GITAM ID" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           )}
-        />
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Submitting...' : 'Register'}
-        </Button>
-      </form>
-    </Form>
+          <FormField
+            control={form.control}
+            name="profilePicture"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Profile Picture</FormLabel>
+                <FormControl>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => field.onChange(e.target.files?.[0])}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Upload a profile picture to be displayed on your ticket.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Register'}
+          </Button>
+        </form>
+      </Form>
+      <MultiStepLoader
+        loadingStates={[
+          { text: 'Submitting registration...' },
+          { text: 'Encrypting data...' },
+          { text: 'Verifying payment...' },
+          { text: 'Sending confirmation email...' },
+        ]}
+        loading={loading}
+      />
+    </>
   )
 }
 
