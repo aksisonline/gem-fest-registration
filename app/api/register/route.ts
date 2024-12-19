@@ -13,8 +13,20 @@ export async function POST(request: NextRequest) {
     const gitamID = formData.get('gitamID') as string | null
     const profilePicture = formData.get('profilePicture') as File | null
 
-    // Generate UID
-    const uid = uuidv4()
+    // Encrypt UID
+    const encryptionResponse = await fetch('https://aksisonline.com/api/encryptv1', {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text: email+name }),
+    })
+
+    if (!encryptionResponse.ok) {
+      throw new Error('Encryption failed')
+    }
+
+    const { uid } = await encryptionResponse.json()
 
     // TODO: Save registration data to database
 
