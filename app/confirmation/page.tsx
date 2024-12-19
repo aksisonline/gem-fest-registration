@@ -9,7 +9,6 @@ type SearchParams = {
 }
 
 type PageProps = {
-  params: { slug: string }
   searchParams: Promise<SearchParams>
 }
 
