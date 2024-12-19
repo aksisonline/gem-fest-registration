@@ -3,16 +3,18 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import TicketDownloader from '@/components/TicketDownloader'
 
-interface PageProps {
-  searchParams: {
-    name?: string
-    uid?: string
-  }
+type SearchParams = {
+  name?: string
+  uid?: string
 }
 
-export default function Confirmation({ searchParams }: PageProps) {
-  const name = searchParams.name || ''
-  const uid = searchParams.uid || ''
+export default function Confirmation({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
+  const name = searchParams.name ?? ''
+  const uid = searchParams.uid ?? ''
 
   return (
     <div className="container mx-auto px-4 py-8 text-center">

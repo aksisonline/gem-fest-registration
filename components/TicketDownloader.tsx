@@ -4,24 +4,29 @@ import { useEffect, useState } from 'react'
 import { render } from '@react-email/render'
 import EventTicket from '@/emails/EventTicket'
 
-export default function TicketDownloader({ name, uid }: { name: string; uid: string }) {
+interface TicketDownloaderProps {
+  name: string
+  uid: string
+}
+
+export default function TicketDownloader({ name, uid }: TicketDownloaderProps) {
   const [ticketHtml, setTicketHtml] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchTicketHtml = async () => {
-      if (name && uid) {
-        const ticketHolder = name || 'Guest'
-        const ticketId = uid || '0000'
-        const ticketHtml = await render(EventTicket({ ticketHolder, ticketId }))
-        setTicketHtml(ticketHtml)
-      }
+      const ticketHolder = name || 'Guest'
+      const ticketId = uid || '0000'
+      const ticketHtml = await render(EventTicket({ ticketHolder, ticketId }))
+      setTicketHtml(ticketHtml)
     }
     fetchTicketHtml()
   }, [name, uid])
 
   const downloadPdf = () => {
+    if (!ticketHtml) return
+
     const element = document.createElement('a')
-    const file = new Blob([ticketHtml!], { type: 'application/pdf' })
+    const file = new Blob([ticketHtml], { type: 'application/pdf' })
     element.href = URL.createObjectURL(file)
     element.download = 'GEM_Fest_Ticket.pdf'
     document.body.appendChild(element)
